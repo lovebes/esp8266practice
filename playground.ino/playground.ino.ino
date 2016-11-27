@@ -18,7 +18,6 @@
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
-//#include <WiFiUdp.h>
 
 MDNSResponder mdns;
 ESP8266WebServer server(80);
@@ -27,6 +26,9 @@ String webPage = "";
 
 int gpio0_pin = 0;
 int gpio2_pin = 2;
+
+int gpio0_analog_level = 0;
+int ANALOG_MAX = 255;
 
 #define PIN 4
 const char* ssid     = "imo";
@@ -57,6 +59,13 @@ void setwifi() {
   Serial.println("WiFi connected");  
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
+}
+
+int stringToInteger(String s)
+{
+   char arr[12];
+   s.toCharArray(arr, sizeof(arr));
+   return atoi(arr);
 }
 //**************************** SETUP() ***************//
 void setup() {
@@ -103,15 +112,32 @@ void setup() {
     digitalWrite(gpio2_pin, LOW);
     delay(1000); 
   });
+  server.on("/dim", [](){
+    int level = stringToInteger(server.arg("level"));
+    server.send(200, "text/html", webPage);
+    analogWrite(gpio0_pin, level);
+//    Serial.println("level for gpio2 change to: "+level);
+    delay(1000); 
+  });
   server.begin();
   Serial.println("HTTP server started");
   
 }
 
-int value = 0;
-
+/*******
+ * LED fade in function
+ */
+void fade_in_gpio0() {
+  if (gpio0_analog_level <= ANALOG_MAX){
+    gpio0_analog_level += 1;
+  }
+  analogWrite(gpio0_pin, gpio0_analog_level);
+  delay(30);
+}
+// END LED FADE IN FUNCTION
 void loop() {
   
   server.handleClient();
 }
+
 
