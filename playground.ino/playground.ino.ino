@@ -29,8 +29,8 @@ int gpio2_pin = 2;
 
 int gpio0_analog_level = 0;
 #define ANALOG_MAX 255
-bool start_fade_in_gpio0 = false;
-
+bool start_fade_gpio0 = false;
+String fade_mode = "";
 #define PIN 4
 const char* ssid     = "imo";
 const char* password = "dlahdlah";
@@ -120,11 +120,19 @@ void setup() {
 //    Serial.println("level for gpio2 change to: "+level);
     delay(1000); 
   });
-  server.on("/fadein", [](){
-    
+  server.on("/fade", [](){
+    String mode = server.arg("mode");
     server.send(200, "text/html", webPage);
-    gpio0_analog_level = 0;
-    start_fade_in_gpio0 = true;
+    if (mode == "out"){
+      start_fade_gpio0 = true;
+      fade_mode = "out";
+    }else if (mode == "in"){
+      start_fade_gpio0 = true;
+      fade_mode = "in";
+    } else {
+      start_fade_gpio0 = false;
+    }
+    
     delay(1000); 
   });
   server.begin();
@@ -136,20 +144,39 @@ void setup() {
  * LED fade in function
  */
 void fade_in_gpio0() {
-  if (start_fade_in_gpio0 && gpio0_analog_level <= ANALOG_MAX){
+  if (start_fade_gpio0 && gpio0_analog_level <= ANALOG_MAX){
     gpio0_analog_level += 1;
     Serial.println(gpio0_analog_level);
   } else if (gpio0_analog_level == ANALOG_MAX){
-    start_fade_in_gpio0 = false;
+    start_fade_gpio0 = false;
   }
   analogWrite(gpio0_pin, gpio0_analog_level);
   delay(30);
 }
 // END LED FADE IN FUNCTION
+/***
+ * LED fade out function
+ */
+void fade_out_gpio0() {
+  if (start_fade_gpio0 && gpio0_analog_level > 0){
+    gpio0_analog_level -= 1;
+    Serial.println(gpio0_analog_level);
+  } else if (gpio0_analog_level == 0){
+    start_fade_gpio0 = false;
+  }
+  analogWrite(gpio0_pin, gpio0_analog_level);
+  delay(30);
+}
+ 
+// END LED FADE OUT FUNCTION
 void loop() {
   
   server.handleClient();
-  fade_in_gpio0();
+  if (fade_mode == "out"){
+    fade_out_gpio0();
+  } else if (fade_mode == "in"){
+    fade_in_gpio0();
+  }
   
 }
 
