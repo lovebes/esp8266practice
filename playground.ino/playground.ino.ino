@@ -214,6 +214,8 @@ int value = 0;
 void loop() {
   
   server.handleClient();
-  gettime();
+  if ( !udp.parsePacket()){
+    gettime();  
+  }  
 }
 
