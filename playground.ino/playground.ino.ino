@@ -28,7 +28,8 @@ int gpio0_pin = 0;
 int gpio2_pin = 2;
 
 int gpio0_analog_level = 0;
-int ANALOG_MAX = 255;
+#define ANALOG_MAX 255
+bool start_fade_in_gpio0 = false;
 
 #define PIN 4
 const char* ssid     = "imo";
@@ -119,6 +120,13 @@ void setup() {
 //    Serial.println("level for gpio2 change to: "+level);
     delay(1000); 
   });
+  server.on("/fadein", [](){
+    
+    server.send(200, "text/html", webPage);
+    gpio0_analog_level = 0;
+    start_fade_in_gpio0 = true;
+    delay(1000); 
+  });
   server.begin();
   Serial.println("HTTP server started");
   
@@ -128,8 +136,11 @@ void setup() {
  * LED fade in function
  */
 void fade_in_gpio0() {
-  if (gpio0_analog_level <= ANALOG_MAX){
+  if (start_fade_in_gpio0 && gpio0_analog_level <= ANALOG_MAX){
     gpio0_analog_level += 1;
+    Serial.println(gpio0_analog_level);
+  } else if (gpio0_analog_level == ANALOG_MAX){
+    start_fade_in_gpio0 = false;
   }
   analogWrite(gpio0_pin, gpio0_analog_level);
   delay(30);
@@ -138,6 +149,8 @@ void fade_in_gpio0() {
 void loop() {
   
   server.handleClient();
+  fade_in_gpio0();
+  
 }
 
 
