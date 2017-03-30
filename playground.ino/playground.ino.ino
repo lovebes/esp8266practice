@@ -95,22 +95,22 @@ void setup() {
   });
   server.on("/socket1On", [](){
     server.send(200, "text/html", webPage);
-    digitalWrite(gpio0_pin, HIGH);
+    analogWrite(gpio0_pin, ANALOG_MAX);
     delay(1000);
   });
   server.on("/socket1Off", [](){
     server.send(200, "text/html", webPage);
-    digitalWrite(gpio0_pin, LOW);
+    analogWrite(gpio0_pin, 0);
     delay(1000); 
   });
   server.on("/socket2On", [](){
     server.send(200, "text/html", webPage);
-    digitalWrite(gpio2_pin, HIGH);
+    analogWrite(gpio2_pin, ANALOG_MAX);
     delay(1000);
   });
   server.on("/socket2Off", [](){
     server.send(200, "text/html", webPage);
-    digitalWrite(gpio2_pin, LOW);
+    analogWrite(gpio2_pin, 0);
     delay(1000); 
   });
   server.on("/dim", [](){
@@ -131,6 +131,7 @@ void setup() {
       fade_mode = "in";
     } else {
       start_fade_gpio0 = false;
+      fade_mode = "";
     }
     
     delay(1000); 
