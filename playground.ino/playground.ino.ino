@@ -44,6 +44,7 @@ pinMode(r_pin,OUTPUT);
 pinMode(g_pin,OUTPUT);
 
 pinMode(b_pin,OUTPUT);
+pinMode(w_pin,OUTPUT);
 
 }
 
@@ -71,6 +72,14 @@ delay(30);
 }
 for(int fade = 255; fade >= 0; fade -=5){
 analogWrite(b_pin,fade);
+delay(30);
+}
+for(int fade = 0; fade <=255; fade +=5){
+analogWrite(w_pin,fade);
+delay(30);
+}
+for(int fade = 255; fade >= 0; fade -=5){
+analogWrite(w_pin,fade);
 delay(30);
 }
 
