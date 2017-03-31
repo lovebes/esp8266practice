@@ -138,7 +138,7 @@ void loop() {
 // }
     Flasher pins[] = {d1, d2, d3, d4};
     for (int i=0; i < sizeof(pins); i++){
-        pins[i].update();
+        pins[i].Update();
     }
 }
 
