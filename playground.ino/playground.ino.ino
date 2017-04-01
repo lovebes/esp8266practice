@@ -14,11 +14,11 @@
  *
  */
 
-#include <ESP8266WiFi.h>
-#include <WiFiClient.h>
-#include <ESP8266WebServer.h>
-#include <ESP8266mDNS.h>
-#include <WiFiUdp.h>
+//#include <ESP8266WiFi.h>
+//#include <WiFiClient.h>
+//#include <ESP8266WebServer.h>
+//#include <ESP8266mDNS.h>
+//#include <WiFiUdp.h>
 
 int d1_pin = 5;
 int d2_pin = 4;
@@ -34,8 +34,8 @@ class Flasher
     // Class Member Variables
     // These are initialized at startup
     int ledPin;      // the number of the LED pin
-    long OnTime;     // milliseconds of on-time
-    long OffTime;    // milliseconds of off-time
+    unsigned long OnTime;     // milliseconds of on-time
+    unsigned long OffTime;    // milliseconds of off-time
  
     // These maintain the current state
     int ledState;                   // ledState used to set the LED
@@ -44,7 +44,7 @@ class Flasher
     // Constructor - creates a Flasher 
     // and initializes the member variables and state
     public:
-    Flasher(int pin, long on, long off)
+    Flasher(int pin, unsigned long on, unsigned long off)
     {
         ledPin = pin;
         pinMode(ledPin, OUTPUT);     
@@ -60,26 +60,26 @@ class Flasher
     {
         // check to see if it's time to change the state of the LED
         unsigned long currentMillis = millis();
-         Serial.println('hello updating');
-        if((ledState == HIGH) && (currentMillis - previousMillis >= OnTime))
-        {Serial.println('turning off');
+         
+        if((ledState == 125) && (currentMillis - previousMillis >= OnTime))
+        {
           ledState = LOW;  // Turn it off
           previousMillis = currentMillis;  // Remember the time
           digitalWrite(ledPin, ledState);  // Update the actual LED
         }
         else if ((ledState == LOW) && (currentMillis - previousMillis >= OffTime))
-        {Serial.println('turning on');
-              ledState = HIGH;  // turn it on
+        {
+              ledState = 125;  // turn it on
               previousMillis = currentMillis;   // Remember the time
               digitalWrite(ledPin, ledState);     // Update the actual LED
         }
     }
 };
 
-Flasher d1(d1_pin, 250, 1250);
-Flasher d2(d2_pin, 500, 1000);
-Flasher d3(d3_pin, 750, 1750);
-Flasher d4(d4_pin, 1000, 2000);
+Flasher d1(d1_pin, 0, 1000);
+Flasher d2(d2_pin, 250, 1250);
+Flasher d3(d3_pin, 500, 1750);
+Flasher d4(d4_pin, 750, 1200);
 
 
 //MDNSResponder mdns;
@@ -92,13 +92,13 @@ void setup() {
 // put your setup code here, to run once:
 
 Serial.begin(115200);
+delay(10);
 }
-
 void loop() {
 
-    Flasher pins[] = {d3};
-    for (int i=0; i < sizeof(pins); i++){
-        pins[i].Update();
-    }
+    d1.Update();
+    d2.Update();
+    d3.Update();
+    d4.Update();
 }
 
