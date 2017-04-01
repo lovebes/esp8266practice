@@ -41,7 +41,7 @@ class Flasher
     int ledState;                   // ledState used to set the LED
     unsigned long previousMillis;   // will store last time LED was updated
 
-      // Constructor - creates a Flasher 
+    // Constructor - creates a Flasher 
     // and initializes the member variables and state
     public:
     Flasher(int pin, long on, long off)
@@ -60,15 +60,15 @@ class Flasher
     {
         // check to see if it's time to change the state of the LED
         unsigned long currentMillis = millis();
-         
+         Serial.println('hello updating');
         if((ledState == HIGH) && (currentMillis - previousMillis >= OnTime))
-        {
+        {Serial.println('turning off');
           ledState = LOW;  // Turn it off
           previousMillis = currentMillis;  // Remember the time
           digitalWrite(ledPin, ledState);  // Update the actual LED
         }
         else if ((ledState == LOW) && (currentMillis - previousMillis >= OffTime))
-        {
+        {Serial.println('turning on');
               ledState = HIGH;  // turn it on
               previousMillis = currentMillis;   // Remember the time
               digitalWrite(ledPin, ledState);     // Update the actual LED
@@ -87,56 +87,16 @@ Flasher d4(d4_pin, 1000, 2000);
 
 //String webPage = "";
 
-//int gpio0_pin = 0;
-//int gpio2_pin = 2;
 
 void setup() {
 // put your setup code here, to run once:
 
-// pinMode(r_pin,OUTPUT);
-
-// pinMode(g_pin,OUTPUT);
-
-// pinMode(b_pin,OUTPUT);
-// pinMode(w_pin,OUTPUT);
-
+Serial.begin(115200);
 }
 
 void loop() {
-// // put your main code here, to run repeatedly:
-// for(int fade = 0; fade <=255; fade +=5){
-// analogWrite(r_pin,fade);
-// delay(30);
-// }
-// for(int fade = 255; fade >= 0; fade -=5){
-// analogWrite(r_pin,fade);
-// delay(30);
-// }
-// for(int fade = 0; fade <=255; fade +=5){
-// analogWrite(g_pin,fade);
-// delay(30);
-// }
-// for(int fade = 255; fade >= 0; fade -=5){
-// analogWrite(g_pin,fade);
-// delay(30);
-// }
-// for(int fade = 0; fade <=255; fade +=5){
-// analogWrite(b_pin,fade);
-// delay(30);
-// }
-// for(int fade = 255; fade >= 0; fade -=5){
-// analogWrite(b_pin,fade);
-// delay(30);
-// }
-// for(int fade = 0; fade <=255; fade +=5){
-// analogWrite(w_pin,fade);
-// delay(30);
-// }
-// for(int fade = 255; fade >= 0; fade -=5){
-// analogWrite(w_pin,fade);
-// delay(30);
-// }
-    Flasher pins[] = {d1, d2, d3, d4};
+
+    Flasher pins[] = {d3};
     for (int i=0; i < sizeof(pins); i++){
         pins[i].Update();
     }
