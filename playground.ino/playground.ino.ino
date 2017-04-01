@@ -40,7 +40,7 @@ class Flasher
     int ledPin;      // the number of the LED pin
     unsigned long OnTime;     // milliseconds of on-time
     unsigned long OffTime;    // milliseconds of off-time
- 
+    
     // These maintain the current state
     int ledState;                   // ledState used to set the LED
     unsigned long previousMillis;   // will store last time LED was updated
@@ -65,7 +65,7 @@ class Flasher
         diffMillis = 0;
         midTime = (OnTime + OffTime)/2;
         intensity = 0;
-        maxIntensity = 125;
+        maxIntensity = 255;
     }
 
     void Update()
@@ -73,24 +73,27 @@ class Flasher
         // check to see if it's time to change the state of the LED
         unsigned long currentMillis = millis();
         diffMillis = currentMillis - previousMillis;
-        if(diffMillis >= OnTime && diffMillis < OffTime)
+        if ((ledState > LOW) && (diffMillis < OnTime)){
+          //modulate intensity during on state
+          intensity = maxIntensity*sin(PI/OnTime * diffMillis);
+          Serial.println(intensity);
+        }
+        else if((ledState > LOW) && (diffMillis >= OnTime)) //time to turn off
         {
-          // parabolic fading in/out
-//          intensity = maxIntensity - maxIntensity*(diffMillis - midTime)^2/(OnTime - midTime);
-          ledState = maxIntensity;  // Turn it on
+          ledState = LOW;  // Turn it off
           previousMillis = currentMillis;  // Remember the time
           analogWrite(ledPin, ledState);  // Update the actual LED
         }
-        else if (diffMillis >= OffTime)
+        else if ((ledState == LOW) && (diffMillis >= OffTime)) //time to turn on
         {
-              ledState = LOW;  // turn it off
+              ledState = LOW;  // turn it on
               previousMillis = currentMillis;   // Remember the time
               analogWrite(ledPin, ledState);     // Update the actual LED
         }
     }
 };
 
-Flasher d1(d5_pin, 1000, 2000);
+Flasher d1(d5_pin, 5000, 2000);
 Flasher d2(d6_pin, 250, 1250);
 Flasher d3(d7_pin, 500, 1750);
 Flasher d4(d8_pin, 750, 1200);
@@ -111,8 +114,8 @@ delay(10);
 void loop() {
 
     d1.Update();
-    d2.Update();
-    d3.Update();
-    d4.Update();
+//    d2.Update();
+//    d3.Update();
+//    d4.Update();
 }
 
