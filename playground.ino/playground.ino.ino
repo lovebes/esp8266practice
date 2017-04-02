@@ -24,10 +24,14 @@ int d1_pin = 5;
 int d2_pin = 4;
 int d3_pin = 0;
 int d4_pin = 2;
-int r_pin = d2_pin;
-int g_pin = d1_pin;
-int b_pin = d3_pin;
-int w_pin = d4_pin; 
+int d5_pin = 14;
+int d6_pin = 12;
+int d7_pin = 13;
+int d8_pin = 15;
+int r_pin = d8_pin;
+int g_pin = d6_pin;
+int b_pin = d7_pin;
+int w_pin = d5_pin; 
 
 class Flasher
 {
@@ -76,10 +80,10 @@ class Flasher
     }
 };
 
-Flasher d1(d1_pin, 0, 1000);
-Flasher d2(d2_pin, 250, 1250);
-Flasher d3(d3_pin, 500, 1750);
-Flasher d4(d4_pin, 750, 1200);
+Flasher d1(d5_pin, 0, 1000);
+Flasher d2(d6_pin, 250, 1250);
+Flasher d3(d7_pin, 500, 1750);
+Flasher d4(d8_pin, 750, 1200);
 
 
 //MDNSResponder mdns;
