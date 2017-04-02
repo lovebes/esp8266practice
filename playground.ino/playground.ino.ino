@@ -42,6 +42,7 @@ class Flasher
     unsigned long OffTime;    // milliseconds of off-time
  
     // These maintain the current state
+    int maxIntensity;
     int ledState;                   // ledState used to set the LED
     unsigned long previousMillis;   // will store last time LED was updated
 
@@ -58,6 +59,8 @@ class Flasher
 
         ledState = 0; 
         previousMillis = 0;
+
+        maxIntensity = 125;
     }
 
     void Update()
@@ -65,14 +68,15 @@ class Flasher
         // check to see if it's time to change the state of the LED
         unsigned long currentMillis = millis();
         if ((ledState > 0) && (currentMillis - previousMillis >= OnTime)){
-          ledState = 125/2 + 125/2*sin(PI/(currentMillis - previousMillis)*currentMillis);
+          ledState = maxIntensity/2 + maxIntensity/2*sin(PI/OnTime*(currentMillis - previousMillis));
           analogWrite(ledPin, ledState);
+          Serial.println(ledState);
         }
-        else if((ledState == 125) && (currentMillis - previousMillis >= OnTime))
+        else if((ledState == maxIntensity) && (currentMillis - previousMillis >= OnTime))
         {
-          ledState = LOW;  // Turn it off
+          ledState = 0;  // Turn it off
           previousMillis = currentMillis;  // Remember the time
-          digitalWrite(ledPin, ledState);  // Update the actual LED
+          analogWrite(ledPin, ledState);  // Update the actual LED
         }
         else if ((ledState == 0) && (currentMillis - previousMillis >= OffTime))
         {
@@ -83,7 +87,7 @@ class Flasher
     }
 };
 
-Flasher d1(d5_pin, 0, 1000);
+Flasher d1(d5_pin, 1000, 1000);
 Flasher d2(d6_pin, 250, 1250);
 Flasher d3(d7_pin, 500, 1750);
 Flasher d4(d8_pin, 750, 1200);
