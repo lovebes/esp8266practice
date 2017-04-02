@@ -40,15 +40,11 @@ class Flasher
     int ledPin;      // the number of the LED pin
     unsigned long OnTime;     // milliseconds of on-time
     unsigned long OffTime;    // milliseconds of off-time
-    
+ 
     // These maintain the current state
     int ledState;                   // ledState used to set the LED
     unsigned long previousMillis;   // will store last time LED was updated
 
-    unsigned long midTime;
-    int maxIntensity;
-    unsigned long diffMillis;
-    int intensity;
     // Constructor - creates a Flasher 
     // and initializes the member variables and state
     public:
@@ -62,38 +58,29 @@ class Flasher
 
         ledState = LOW; 
         previousMillis = 0;
-        diffMillis = 0;
-        midTime = (OnTime + OffTime)/2;
-        intensity = 0;
-        maxIntensity = 255;
     }
 
     void Update()
     {
         // check to see if it's time to change the state of the LED
         unsigned long currentMillis = millis();
-        diffMillis = currentMillis - previousMillis;
-        if ((ledState > LOW) && (diffMillis < OnTime)){
-          //modulate intensity during on state
-          intensity = maxIntensity*sin(PI/OnTime * diffMillis);
-          Serial.println(intensity);
-        }
-        else if((ledState > LOW) && (diffMillis >= OnTime)) //time to turn off
+         
+        if((ledState == 125) && (currentMillis - previousMillis >= OnTime))
         {
           ledState = LOW;  // Turn it off
           previousMillis = currentMillis;  // Remember the time
-          analogWrite(ledPin, ledState);  // Update the actual LED
+          digitalWrite(ledPin, ledState);  // Update the actual LED
         }
-        else if ((ledState == LOW) && (diffMillis >= OffTime)) //time to turn on
+        else if ((ledState == LOW) && (currentMillis - previousMillis >= OffTime))
         {
-              ledState = LOW;  // turn it on
+              ledState = 125;  // turn it on
               previousMillis = currentMillis;   // Remember the time
-              analogWrite(ledPin, ledState);     // Update the actual LED
+              digitalWrite(ledPin, ledState);     // Update the actual LED
         }
     }
 };
 
-Flasher d1(d5_pin, 5000, 2000);
+Flasher d1(d5_pin, 0, 1000);
 Flasher d2(d6_pin, 250, 1250);
 Flasher d3(d7_pin, 500, 1750);
 Flasher d4(d8_pin, 750, 1200);
@@ -114,8 +101,8 @@ delay(10);
 void loop() {
 
     d1.Update();
-//    d2.Update();
-//    d3.Update();
-//    d4.Update();
+    d2.Update();
+    d3.Update();
+    d4.Update();
 }
 
