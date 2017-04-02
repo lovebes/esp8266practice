@@ -56,7 +56,7 @@ class Flasher
         OnTime = on;
         OffTime = off;
 
-        ledState = LOW; 
+        ledState = 0; 
         previousMillis = 0;
     }
 
@@ -64,18 +64,21 @@ class Flasher
     {
         // check to see if it's time to change the state of the LED
         unsigned long currentMillis = millis();
-         
-        if((ledState == 125) && (currentMillis - previousMillis >= OnTime))
+        if ((ledState > 0) && (currentMillis - previousMillis >= OnTime)){
+          ledState = 125/2 + 125/2*sin(PI/(currentMillis - previousMillis)*currentMillis);
+          analogWrite(ledPin, ledState);
+        }
+        else if((ledState == 125) && (currentMillis - previousMillis >= OnTime))
         {
           ledState = LOW;  // Turn it off
           previousMillis = currentMillis;  // Remember the time
           digitalWrite(ledPin, ledState);  // Update the actual LED
         }
-        else if ((ledState == LOW) && (currentMillis - previousMillis >= OffTime))
+        else if ((ledState == 0) && (currentMillis - previousMillis >= OffTime))
         {
-              ledState = 125;  // turn it on
+              ledState = 1;  // turn it on
               previousMillis = currentMillis;   // Remember the time
-              digitalWrite(ledPin, ledState);     // Update the actual LED
+              analogWrite(ledPin, ledState);     // Update the actual LED
         }
     }
 };
