@@ -67,7 +67,7 @@ class Flasher
     {
         // check to see if it's time to change the state of the LED
         unsigned long currentMillis = millis();
-        if ((ledState > 0) && (currentMillis - previousMillis < OnTime)){
+        if ((ledState > 0) && (currentMillis - previousMillis >= OnTime)){
           ledState = maxIntensity/2 + maxIntensity/2*sin(PI/OnTime*(currentMillis - previousMillis));
           analogWrite(ledPin, ledState);
           Serial.println(ledState);
