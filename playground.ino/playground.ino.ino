@@ -44,27 +44,43 @@ class Flasher
     // These maintain the current state
     int maxIntensity;
     int ledState;                   // ledState used to set the LED
+    int targetLedState;             // current interim level of LED intensity "in transit"
+    int progressLedState;           // target LED intensity
+    float levelFuncA;                  // 'a' in ax+b intensity linear func
+    float levelFuncB;                  // 'b' in ax+b intensity linear func
     unsigned long previousMillis;   // will store last time LED was updated
-
+    
     // Constructor - creates a Flasher 
     // and initializes the member variables and state
     public:
-    Flasher(int pin, unsigned long on, unsigned long off)
+    Flasher(int pin)
     {
         ledPin = pin;
         pinMode(ledPin, OUTPUT);     
           
-        OnTime = on;
-        OffTime = off;
-
+    
         ledState = 0; 
         previousMillis = 0;
 
-        maxIntensity = 125;
+        maxIntensity = 512;
+
+        progressLedState = ledState;
+        targetLedState = ledState;
+        levelFuncA = 0;
+        levelFuncB = 0;
+    }
+    void setOnOffParams(unsigned long on, unsigned long off){
+        OnTime = on;
+        OffTime = off;
     }
 
     void Update()
     {
+        // OnOffAnimate();
+        walkToTargetIntensity();
+    }
+
+    void OnOffAnimate(){
         // check to see if it's time to change the state of the LED
         unsigned long currentMillis = millis();
         if ((ledState > 0) && (currentMillis - previousMillis >= OnTime)){
@@ -85,12 +101,42 @@ class Flasher
               analogWrite(ledPin, ledState);     // Update the actual LED
         }
     }
+
+    void formIntensityFunc(int intensity, float duration){
+        // calculate a and b in ax+b based on target intensity
+        /*
+        a = rise/run = (targetInt - ledState) / (time)
+        b = ledState
+
+        */
+
+        targetLedState = intensity;
+        levelFuncB = ledState;
+        levelFuncA = (targetLedState - ledState) / duration;
+        previousMillis = millis();
+        Serial.println(levelFuncA);
+    }
+
+    void walkToTargetIntensity(){
+        // run ax+b
+        if (progressLedState < targetLedState){
+            unsigned long now = millis();
+            progressLedState = levelFuncA * (now - previousMillis) + levelFuncB;
+            // Serial.println(progressLedState);
+            analogWrite(ledPin, progressLedState);
+        }
+    }    
 };
 
-Flasher d1(d5_pin, 1000, 1000);
-Flasher d2(d6_pin, 250, 1250);
-Flasher d3(d7_pin, 500, 1750);
-Flasher d4(d8_pin, 750, 1200);
+Flasher d1(d5_pin);
+Flasher d2(d6_pin);
+Flasher d3(d7_pin);
+Flasher d4(d8_pin);
+// d1.setOnOffParams(1000, 1000);
+// d2.setOnOffParams(250, 1250);
+// d3.setOnOffParams(500, 1750);
+// d4.setOnOffParams(750, 1200);
+
 
 
 //MDNSResponder mdns;
@@ -101,15 +147,25 @@ Flasher d4(d8_pin, 750, 1200);
 
 void setup() {
 // put your setup code here, to run once:
-
 Serial.begin(115200);
 delay(10);
+
+
+d1.formIntensityFunc(255, 45000);
+ d2.formIntensityFunc(255, 45000);
+ d3.formIntensityFunc(255, 45000);
+ d4.formIntensityFunc(255, 45000);
+
+
+
 }
 void loop() {
 
     d1.Update();
-    d2.Update();
-    d3.Update();
-    d4.Update();
+     d2.Update();
+     d3.Update();
+     d4.Update();
 }
+
+
 
