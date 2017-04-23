@@ -76,7 +76,7 @@ class Flasher
 
     void Update()
     {
-        // OnOffAnimate();
+        OnOffAnimate();
         walkToTargetIntensity();
     }
 
@@ -132,11 +132,6 @@ Flasher d1(d5_pin);
 Flasher d2(d6_pin);
 Flasher d3(d7_pin);
 Flasher d4(d8_pin);
-// d1.setOnOffParams(1000, 1000);
-// d2.setOnOffParams(250, 1250);
-// d3.setOnOffParams(500, 1750);
-// d4.setOnOffParams(750, 1200);
-
 
 
 //MDNSResponder mdns;
@@ -152,9 +147,14 @@ delay(10);
 
 
 d1.formIntensityFunc(255, 45000);
- d2.formIntensityFunc(255, 45000);
- d3.formIntensityFunc(255, 45000);
- d4.formIntensityFunc(255, 45000);
+d2.formIntensityFunc(255, 45000);
+d3.formIntensityFunc(255, 45000);
+d4.formIntensityFunc(255, 45000);
+d1.setOnOffParams(1000, 1000);
+d2.setOnOffParams(250, 1250);
+d3.setOnOffParams(500, 1750);
+d4.setOnOffParams(750, 1200);
+
 
 
 
